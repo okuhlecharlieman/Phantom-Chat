@@ -3,15 +3,11 @@ import random
 
 app = Flask(__name__)
 
-# Ghost replies
-GHOST_REPLIES = [
-    "I see you...",
-    "Why are you here?",
-    "Don't look behind you...",
-    "You can't escape me...",
-    "The darkness is watching...",
-    "You shouldn't be here...",
-    "I am always near..."
+messages = [
+    "Did you feel that cold breeze? 👻",
+    "Someone’s watching you...",
+    "You shouldn’t have typed that...",
+    "It’s too late to log off now...",
 ]
 
 @app.route("/")
@@ -20,10 +16,7 @@ def index():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_message = request.json.get("message", "")
-    # Choose random ghost reply
-    ghost_message = random.choice(GHOST_REPLIES)
-    return jsonify({"reply": ghost_message})
+    return jsonify({"reply": random.choice(messages)})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8080)
