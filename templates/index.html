@@ -7,24 +7,63 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <h1>👻 Phantom Chat 👻</h1>
-  <div id="chat-window"><div id="messages"></div></div>
+  <div id="newsletter-popup" class="popup">
+    <span class="close" onclick="document.getElementById('newsletter-popup').style.display='none'">×</span>
+    <h2>✉ You're missing out!</h2>
+    <p>Sign up for our weekly newsletter to learn about hackathons, community updates, and awesome projects.</p>
+    <button onclick="alert('Thanks for signing up!')">Sign me up</button>
+  </div>
+
+  <header>
+    <h1 class="flicker">👻 Phantom Chat 👻</h1>
+    <p class="subtitle">Ever wanted to chat with a ghost? <span class="ghost-emoji">🕯️</span></p>
+  </header>
+
+  <div id="chat-window">
+    <div id="messages"></div>
+    <div id="chat-actions">
+      <button class="emoji-btn" onclick="addEmoji('😂')">😂</button>
+      <button class="emoji-btn" onclick="addEmoji('😱')">😱</button>
+      <button class="emoji-btn" onclick="addEmoji('👻')">👻</button>
+      <button class="emoji-btn" onclick="addEmoji('🎃')">🎃</button>
+      <button class="like-btn" onclick="likeMessage()">👍 Like</button>
+      <button class="comment-btn" onclick="commentMessage()">💬 Comment</button>
+    </div>
+  </div>
   <input type="text" id="user-input" placeholder="Talk to the ghost...">
   <button id="send-btn">Send</button>
   <audio id="ghost-sound" src="{{ url_for('static', filename='ghost.mp3') }}"></audio>
+  <audio id="bg-music" src="{{ url_for('static', filename='spooky-bg.mp3') }}" loop></audio>
+
+  <!-- Animated fog background -->
+  <div id="fog-bg"></div>
+  <!-- Floating ghost animation -->
+  <div id="floating-ghost">👻</div>
+  <!-- Random ghost popup (jump scare) -->
+  <div id="ghost-popup" class="popup" style="display:none;">
+    <span class="close" onclick="document.getElementById('ghost-popup').style.display='none'">×</span>
+    <h2 class="flicker">BOO! 👻</h2>
+    <p>The ghost is watching you...</p>
+  </div>
+
   <script>
     const messages = document.getElementById("messages");
     const input = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
     const ghostSound = document.getElementById("ghost-sound");
+    const bgMusic = document.getElementById("bg-music");
+    const floatingGhost = document.getElementById("floating-ghost");
+    const fogBg = document.getElementById("fog-bg");
+    const ghostPopup = document.getElementById("ghost-popup");
 
     function appendMessage(sender, text) {
       const msg = document.createElement("div");
-      msg.className = sender === "user" ? "user-msg" : "ghost-msg";
+      msg.className = sender === "user" ? "user-msg" : "ghost-msg flicker";
       msg.innerText = text;
       messages.appendChild(msg);
       messages.scrollTop = messages.scrollHeight;
       if(sender === "ghost") ghostSound.play();
+      if(sender === "ghost") spawnFloatingEmoji('👻');
     }
 
     async function sendMessage() {
@@ -43,6 +82,81 @@
 
     sendBtn.addEventListener("click", sendMessage);
     input.addEventListener("keypress", e => { if(e.key === "Enter") sendMessage(); });
+
+    // Emoji, Like, Comment functions
+    function addEmoji(emoji) {
+      input.value += emoji;
+      input.focus();
+      spawnFloatingEmoji(emoji);
+    }
+    function likeMessage() {
+      if(messages.lastChild) {
+        messages.lastChild.innerHTML += ' <span class="liked">👍</span>';
+        spawnFloatingEmoji('👍');
+      }
+    }
+    function commentMessage() {
+      const comment = prompt("Add your comment:");
+      if(comment && messages.lastChild) {
+        messages.lastChild.innerHTML += `<div class='comment'>💬 ${comment}</div>`;
+        spawnFloatingEmoji('💬');
+      }
+    }
+
+    // Floating emoji animation
+    function spawnFloatingEmoji(emoji) {
+      const e = document.createElement('div');
+      e.className = 'floating-emoji';
+      e.innerText = emoji;
+      e.style.left = (Math.random() * 80 + 10) + 'vw';
+      document.body.appendChild(e);
+      setTimeout(() => { e.remove(); }, 2000);
+    }
+
+    // Floating ghost animation
+    function animateGhost() {
+      let pos = 0, dir = 1;
+      setInterval(() => {
+        pos += dir * 2;
+        if(pos > 80) dir = -1;
+        if(pos < 0) dir = 1;
+        floatingGhost.style.left = pos + 'vw';
+        floatingGhost.style.top = (10 + Math.sin(pos/10)*5) + 'vh';
+      }, 80);
+    }
+
+    // Fog effect
+    function animateFog() {
+      fogBg.innerHTML = '';
+      for(let i=0; i<10; i++) {
+        const fog = document.createElement('div');
+        fog.className = 'fog';
+        fog.style.left = (i*10 + Math.random()*5) + 'vw';
+        fog.style.top = (Math.random()*60) + 'vh';
+        fog.style.animationDuration = (10 + Math.random()*10) + 's';
+        fogBg.appendChild(fog);
+      }
+    }
+
+    // Random ghost popup (jump scare)
+    function randomGhostPopup() {
+      setTimeout(() => {
+        ghostPopup.style.display = 'block';
+        ghostSound.play();
+        setTimeout(() => { ghostPopup.style.display = 'none'; }, 2000);
+        randomGhostPopup();
+      }, 15000 + Math.random()*15000);
+    }
+
+    // Show newsletter popup on load and start effects
+    window.onload = function() {
+      document.getElementById('newsletter-popup').style.display = 'block';
+      bgMusic.volume = 0.3;
+      bgMusic.play();
+      animateGhost();
+      animateFog();
+      randomGhostPopup();
+    };
   </script>
 </body>
 </html>
