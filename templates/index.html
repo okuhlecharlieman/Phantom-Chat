@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>Phantom Chat</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+  <div class="container">
   <div id="newsletter-popup" class="popup">
     <span class="close" onclick="document.getElementById('newsletter-popup').style.display='none'">×</span>
     <h2>✉ You're missing out!</h2>
@@ -158,5 +161,6 @@
       randomGhostPopup();
     };
   </script>
+  </div>
 </body>
 </html>
