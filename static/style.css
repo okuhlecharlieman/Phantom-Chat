@@ -70,6 +70,69 @@ body::after {
   gap: 15px;
 }
 
+/* Header styles */
+h1.flicker {
+  font-family: 'Nosifer', cursive;
+  font-size: 3em;
+  text-align: center;
+  color: #8b0000;
+  text-shadow: 
+    0 0 10px #ff0000,
+    0 0 20px #ff0000,
+    0 0 30px #000;
+  animation: creepyFlicker 3s infinite;
+  margin: 20px 0;
+}
+
+@keyframes creepyFlicker {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.subtitle {
+  font-size: 1.4em;
+  text-align: center;
+  color: #ff0000;
+  text-shadow: 0 0 10px #8b0000;
+  animation: pulseText 2s infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes pulseText {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Floating candles */
+.floating-candles {
+  position: absolute;
+  width: 100%;
+  top: 20px;
+  left: 0;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.candle {
+  font-size: 2em;
+  animation: floatCandle 3s infinite ease-in-out;
+  filter: drop-shadow(0 0 5px rgba(255, 165, 0, 0.5));
+}
+
+.candle:nth-child(2) {
+  animation-delay: -1s;
+}
+
+.candle:nth-child(3) {
+  animation-delay: -2s;
+}
+
+@keyframes floatCandle {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
 /* Chat window full width inside container */
 #chat-window {
   width: 100%;
@@ -308,6 +371,27 @@ button#send-btn::after {
 }
 
 /* Responsive adjustments */
+/* Media Queries */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  h1.flicker {
+    font-size: 2.5em;
+    margin: 15px 0;
+  }
+
+  .subtitle {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+
+  .candle {
+    font-size: 1.8em;
+  }
+}
+
 @media (max-width: 480px) {
   .container {
     padding: 10px;
@@ -322,64 +406,34 @@ button#send-btn::after {
     font-size: 0.9em;
     margin: 5px 0;
   }
-  h1.flicker {
-    font-family: 'Nosifer', cursive;
-    font-size: 2.5em;
-    text-align: center;
-    color: #8b0000;
-    text-shadow: 
-      0 0 10px #ff0000,
-      0 0 20px #ff0000,
-      0 0 30px #000;
-    animation: creepyFlicker 3s infinite;
-  }
 
-  @keyframes creepyFlicker {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
+  h1.flicker {
+    font-size: 2em;
+    margin: 10px 0;
   }
 
   .subtitle {
-    font-size: 1.2em;
-    text-align: center;
-    color: #ff0000;
-    text-shadow: 0 0 10px #8b0000;
-    animation: pulseText 2s infinite;
-  }
-
-  @keyframes pulseText {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-
-  /* Floating candles */
-  .floating-candles {
-    position: absolute;
-    width: 100%;
-    top: 20px;
-    left: 0;
-    display: flex;
-    justify-content: space-around;
-    pointer-events: none;
+    font-size: 1.1em;
+    margin-bottom: 10px;
   }
 
   .candle {
-    font-size: 2em;
-    animation: floatCandle 3s infinite ease-in-out;
-    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 0.5));
+    font-size: 1.5em;
   }
 
-  .candle:nth-child(2) {
-    animation-delay: -1s;
+  .emoji-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 1.1em;
   }
 
-  .candle:nth-child(3) {
-    animation-delay: -2s;
+  input#user-input {
+    padding: 8px;
   }
 
-  @keyframes floatCandle {
-    0%, 100% { transform: translateY(0) rotate(-5deg); }
-    50% { transform: translateY(-10px) rotate(5deg); }
+  button#send-btn {
+    padding: 8px 0;
+    font-size: 0.9em;
   }
 }
 
