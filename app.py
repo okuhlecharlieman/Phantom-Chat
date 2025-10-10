@@ -2,6 +2,12 @@
 from flask import Flask, render_template, request, jsonify
 import random
 import requests
+import logging
+logging.basicConfig(
+    filename='error.log',
+    level=logging.ERROR,
+    format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+)
 
 app = Flask(__name__)
 
@@ -25,8 +31,10 @@ def get_ai_reply(user_message):
             ai_reply = data.get('generated_text')
             if ai_reply:
                 return ai_reply
-    except Exception:
-        pass
+        else:
+            logging.error(f"Hugging Face API error: {response.status_code} {response.text}")
+    except Exception as e:
+        logging.exception(f"Exception in get_ai_reply: {e}")
     # Fallback to spooky message
     return random.choice(messages)
 
@@ -37,9 +45,13 @@ def index():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_message = request.json.get("message", "")
-    reply = get_ai_reply(user_message)
-    return jsonify({"reply": reply})
+    try:
+        user_message = request.json.get("message", "")
+        reply = get_ai_reply(user_message)
+        return jsonify({"reply": reply})
+    except Exception as e:
+        logging.exception(f"Exception in /chat endpoint: {e}")
+        return jsonify({"reply": random.choice(messages)})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
