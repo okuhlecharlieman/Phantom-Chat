@@ -4,9 +4,10 @@ import random
 import requests
 import logging
 logging.basicConfig(
-    filename='error.log',
-    level=logging.ERROR,
-    format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+    filename='chat.log',
+    level=logging.INFO,  # Changed to INFO to see all requests
+    format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]',
+    filemode='a'  # Append mode
 )
 
 app = Flask(__name__)
@@ -22,19 +23,40 @@ messages = [
 def get_ai_reply(user_message):
     # Hugging Face Inference API for DialoGPT (no auth required for small requests)
     url = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium"
-    payload = {"inputs": {"text": user_message}}
+    payload = {"inputs": user_message}  # Fixed payload format
+    
     try:
+        logging.info(f"Sending request to Hugging Face API with message: {user_message}")
         response = requests.post(url, json=payload, timeout=8)
+        
         if response.status_code == 200:
             data = response.json()
-            # Extract generated text
-            ai_reply = data.get('generated_text')
+            logging.info(f"API Response: {data}")
+            
+            # Handle different response formats
+            if isinstance(data, list) and len(data) > 0:
+                # List response format
+                ai_reply = data[0].get('generated_text', '')
+            elif isinstance(data, dict):
+                # Dictionary response format
+                ai_reply = data.get('generated_text', '')
+            else:
+                logging.error(f"Unexpected API response format: {data}")
+                return random.choice(messages)
+                
             if ai_reply:
-                return ai_reply
+                # Make the reply more ghostly
+                spooky_prefixes = ["*whispers* ", "*ethereal voice* ", "*ghostly* ", "👻 "]
+                return random.choice(spooky_prefixes) + ai_reply
         else:
             logging.error(f"Hugging Face API error: {response.status_code} {response.text}")
+    except requests.exceptions.Timeout:
+        logging.error("API request timed out")
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Request failed: {str(e)}")
     except Exception as e:
         logging.exception(f"Exception in get_ai_reply: {e}")
+    
     # Fallback to spooky message
     return random.choice(messages)
 
