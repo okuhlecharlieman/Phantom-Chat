@@ -73,7 +73,7 @@ body::after {
 /* Header styles */
 h1.flicker {
   font-family: 'Nosifer', cursive;
-  font-size: 3em;
+  font-size: clamp(1.5em, 5vw, 3em);
   text-align: center;
   color: #8b0000;
   text-shadow: 
@@ -82,6 +82,9 @@ h1.flicker {
     0 0 30px #000;
   animation: creepyFlicker 3s infinite;
   margin: 20px 0;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
 }
 
 @keyframes creepyFlicker {
