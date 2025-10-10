@@ -19,7 +19,12 @@
 
   <header>
     <h1 class="flicker">👻 Phantom Chat 👻</h1>
-    <p class="subtitle">Ever wanted to chat with a ghost? <span class="ghost-emoji">🕯️</span></p>
+    <p class="subtitle">Dare to speak with the dead? <span class="ghost-emoji">💀</span></p>
+    <div class="floating-candles">
+      <span class="candle">🕯️</span>
+      <span class="candle">🕯️</span>
+      <span class="candle">🕯️</span>
+    </div>
   </header>
 
   <div id="chat-window">
@@ -33,8 +38,8 @@
       <button class="comment-btn" onclick="commentMessage()">💬 Comment</button>
     </div>
   </div>
-  <input type="text" id="user-input" placeholder="Talk to the ghost...">
-  <button id="send-btn">Send</button>
+  <input type="text" id="user-input" placeholder="Whisper to the spirits...">
+  <button id="send-btn">Summon Reply 🔮</button>
   <audio id="ghost-sound" src="{{ url_for('static', filename='ghost.mp3') }}"></audio>
   <audio id="bg-music" src="{{ url_for('static', filename='spooky-bg.mp3') }}" loop></audio>
 

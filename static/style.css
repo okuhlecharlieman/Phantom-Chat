@@ -1,15 +1,57 @@
 /* Ensure body uses full viewport height and centers content vertically and horizontally */
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&display=swap');
+
 body {
-  background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+  background: #000;
   color: #fff;
   font-family: 'Courier New', monospace;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* full viewport height */
+  height: 100vh;
   margin: 0;
   padding: 20px;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Creepy background effect */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" x="50" text-anchor="middle" fill="rgba(255,0,0,0.03)" font-size="150">👻</text></svg>');
+  background-size: 100px 100px;
+  animation: hauntedBg 60s linear infinite;
+  z-index: -1;
+}
+
+@keyframes hauntedBg {
+  0% { background-position: 0 0; }
+  100% { background-position: 100px 100px; }
+}
+
+/* Blood drip effect */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(180deg, 
+    transparent 0%,
+    rgba(139, 0, 0, 0.1) 50%,
+    rgba(139, 0, 0, 0.2) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Container centered block with responsive max widths */
@@ -28,42 +70,129 @@ body {
 #chat-window {
   width: 100%;
   height: 400px;
-  border: 2px solid #00ffae;
+  border: 2px solid #8b0000;
   padding: 10px;
   overflow-y: scroll;
   margin-bottom: 10px;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0,0,0,0.95);
   border-radius: 12px;
-  box-shadow: 0 0 20px #00ffae44;
+  box-shadow: 
+    0 0 20px rgba(139, 0, 0, 0.5),
+    inset 0 0 30px rgba(139, 0, 0, 0.3);
   font-size: 1em;
+  position: relative;
+}
+
+/* Scrollbar styling */
+#chat-window::-webkit-scrollbar {
+  width: 8px;
+}
+
+#chat-window::-webkit-scrollbar-track {
+  background: #000;
+}
+
+#chat-window::-webkit-scrollbar-thumb {
+  background: #8b0000;
+  border-radius: 4px;
+}
+
+/* Message styling */
+.user-msg, .ghost-msg {
+  padding: 8px 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  max-width: 85%;
+  word-wrap: break-word;
+  position: relative;
+}
+
+.user-msg {
+  background: rgba(20, 20, 20, 0.8);
+  color: #fff;
+  margin-left: auto;
+  border-left: 3px solid #8b0000;
+}
+
+.ghost-msg {
+  background: rgba(139, 0, 0, 0.2);
+  color: #ff0000;
+  margin-right: auto;
+  border-right: 3px solid #8b0000;
+  font-family: 'Creepster', cursive;
+  text-shadow: 0 0 5px #ff0000;
+  animation: ghostFlicker 2s infinite;
+}
+
+@keyframes ghostFlicker {
+  0%, 100% { opacity: 1; text-shadow: 0 0 5px #ff0000; }
+  50% { opacity: 0.7; text-shadow: 0 0 15px #ff0000; }
 }
 
 /* Input and button full width on mobile */
 input#user-input {
   width: 100%;
   max-width: 100%;
-  padding: 7px;
+  padding: 10px;
   margin-bottom: 8px;
-  background: #222;
+  background: rgba(0, 0, 0, 0.8);
   color: #fff;
-  border: 1px solid #00ffae;
+  border: 1px solid #8b0000;
   border-radius: 6px;
   font-size: 1em;
   box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+input#user-input:focus {
+  outline: none;
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
+  border-color: #ff0000;
 }
 
 button#send-btn {
   width: 100%;
   max-width: 100%;
-  padding: 7px 0;
-  background: #00ffae;
+  padding: 10px 0;
+  background: #8b0000;
   border: none;
   border-radius: 6px;
-  color: #222;
+  color: #fff;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
   font-size: 1em;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+button#send-btn:hover {
+  background: #ff0000;
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+}
+
+button#send-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.2),
+    transparent,
+    transparent
+  );
+  transform: rotate(45deg);
+  animation: buttonGlow 2s infinite;
+}
+
+@keyframes buttonGlow {
+  0% { transform: rotate(45deg) translateX(-100%); }
+  100% { transform: rotate(45deg) translateX(100%); }
 }
 
 /* Responsive adjustments */
@@ -73,12 +202,63 @@ button#send-btn {
     font-size: 0.9em;
   }
   h1.flicker {
-    font-size: 2em;
+    font-family: 'Nosifer', cursive;
+    font-size: 2.5em;
     text-align: center;
+    color: #8b0000;
+    text-shadow: 
+      0 0 10px #ff0000,
+      0 0 20px #ff0000,
+      0 0 30px #000;
+    animation: creepyFlicker 3s infinite;
   }
+
+  @keyframes creepyFlicker {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+
   .subtitle {
-    font-size: 1em;
+    font-size: 1.2em;
     text-align: center;
+    color: #ff0000;
+    text-shadow: 0 0 10px #8b0000;
+    animation: pulseText 2s infinite;
+  }
+
+  @keyframes pulseText {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Floating candles */
+  .floating-candles {
+    position: absolute;
+    width: 100%;
+    top: 20px;
+    left: 0;
+    display: flex;
+    justify-content: space-around;
+    pointer-events: none;
+  }
+
+  .candle {
+    font-size: 2em;
+    animation: floatCandle 3s infinite ease-in-out;
+    filter: drop-shadow(0 0 5px rgba(255, 165, 0, 0.5));
+  }
+
+  .candle:nth-child(2) {
+    animation-delay: -1s;
+  }
+
+  .candle:nth-child(3) {
+    animation-delay: -2s;
+  }
+
+  @keyframes floatCandle {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
   }
 }
 
