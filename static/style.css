@@ -6,14 +6,14 @@ body {
   color: #fff;
   font-family: 'Courier New', monospace;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
-  padding: 20px;
+  padding: 0;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 /* Creepy background effect */
@@ -58,16 +58,16 @@ body::after {
 .container {
   width: 100%;
   max-width: 400px;
-  height: 100vh;
+  min-height: 100vh;
+  height: auto;
   margin: 0 auto;
-  padding: 15px;
+  padding: 20px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-y: auto;
   position: relative;
-  gap: 10px;
+  gap: 15px;
 }
 
 /* Chat window full width inside container */
@@ -209,6 +209,102 @@ button#send-btn::after {
 @keyframes buttonGlow {
   0% { transform: rotate(45deg) translateX(-100%); }
   100% { transform: rotate(45deg) translateX(100%); }
+}
+
+#chat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  margin: 10px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.emoji-btn {
+  width: 40px;
+  height: 40px;
+  font-size: 1.2em;
+  border-radius: 50%;
+  border: 1px solid #8b0000;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.emoji-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
+}
+
+/* Ghost typing animation */
+@keyframes typing {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+.ghost-typing {
+  display: flex;
+  gap: 5px;
+  padding: 10px;
+  margin: 5px 0;
+}
+
+.ghost-typing span {
+  width: 8px;
+  height: 8px;
+  background: #8b0000;
+  border-radius: 50%;
+  animation: typing 1s infinite;
+}
+
+.ghost-typing span:nth-child(2) { animation-delay: 0.2s; }
+.ghost-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+/* Popup styling */
+.popup {
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid #8b0000;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+  padding: 20px;
+  text-align: center;
+  max-width: 90%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.popup h2 {
+  color: #8b0000;
+  font-family: 'Nosifer', cursive;
+  margin-bottom: 15px;
+}
+
+.popup .close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  color: #8b0000;
+  cursor: pointer;
+  font-size: 24px;
+  transition: all 0.3s ease;
+}
+
+.popup .close:hover {
+  color: #ff0000;
+  transform: scale(1.1);
+}
+
+.popup button {
+  margin-top: 15px;
 }
 
 /* Responsive adjustments */

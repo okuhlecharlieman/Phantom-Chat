@@ -68,18 +68,41 @@
       if(sender === "ghost") spawnFloatingEmoji('👻');
     }
 
+    function showTypingAnimation() {
+      const typing = document.createElement('div');
+      typing.className = 'ghost-typing';
+      typing.innerHTML = '<span></span><span></span><span></span>';
+      messages.appendChild(typing);
+      messages.scrollTop = messages.scrollHeight;
+      return typing;
+    }
+
     async function sendMessage() {
       const userMessage = input.value.trim();
       if(!userMessage) return;
       appendMessage("user", userMessage);
       input.value = "";
-      const response = await fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage })
-      });
-      const data = await response.json();
-      setTimeout(() => { appendMessage("ghost", data.reply); }, 1000 + Math.random() * 2000);
+      
+      // Show typing animation
+      const typingAnimation = showTypingAnimation();
+      
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userMessage })
+        });
+        const data = await response.json();
+        
+        // Remove typing animation
+        setTimeout(() => {
+          typingAnimation.remove();
+          appendMessage("ghost", data.reply);
+        }, 1000 + Math.random() * 2000);
+      } catch (error) {
+        typingAnimation.remove();
+        appendMessage("ghost", "👻 *ethereal static* Something's interfering with the connection...");
+      }
     }
 
     sendBtn.addEventListener("click", sendMessage);
