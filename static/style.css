@@ -468,7 +468,7 @@ button#send-btn::after {
   #chat-window {
     height: 50vh;
     min-height: 150px;
-    max-height: 300px;
+    max-height: 250px;
     font-size: 0.9em;
     margin: 5px 0;
   }
