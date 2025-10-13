@@ -4,15 +4,19 @@ import random
 import requests
 import logging
 import os
+import json
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
+# Set up logging to both file and console
 logging.basicConfig(
-    filename='chat.log',
-    level=logging.INFO,  # Changed to INFO to see all requests
+    level=logging.INFO,
     format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]',
-    filemode='a'  # Append mode
+    handlers=[
+        logging.FileHandler('chat.log'),
+        logging.StreamHandler()
+    ]
 )
 
 app = Flask(__name__)
@@ -67,23 +71,52 @@ def get_ai_reply(user_message):
     
     try:
         logging.info(f"Sending request to Hugging Face API with message: {user_message}")
+        logging.info(f"Headers: {headers}")
+        logging.info(f"Payload: {payload}")
+        
         response = requests.post(url, json=payload, headers=headers, timeout=10)
+        logging.info(f"Response status code: {response.status_code}")
+        logging.info(f"Response headers: {response.headers}")
+        
+        # Log the raw response text
+        logging.info(f"Raw response text: {response.text}")
         
         if response.status_code == 200:
-            data = response.json()
-            logging.info(f"API Response: {data}")
-            
-            # Extract the generated response
-            if isinstance(data, dict) and 'generated_text' in data:
-                ai_reply = data['generated_text']
-            else:
-                logging.error(f"Unexpected API response format: {data}")
-                return make_spooky_response(random.choice(messages))
+            try:
+                data = response.json()
+                logging.info(f"Parsed API Response: {data}")
                 
-            if ai_reply:
-                return make_spooky_response(ai_reply)
+                # Try different response formats
+                if isinstance(data, dict):
+                    if 'generated_text' in data:
+                        ai_reply = data['generated_text']
+                    elif 'response' in data:
+                        ai_reply = data['response']
+                    elif 'outputs' in data:
+                        ai_reply = data['outputs']
+                    else:
+                        logging.error(f"Could not find response in data structure: {data}")
+                        return make_spooky_response(random.choice(messages))
+                elif isinstance(data, list) and len(data) > 0:
+                    ai_reply = str(data[0])
+                else:
+                    logging.error(f"Unexpected API response format: {data}")
+                    return make_spooky_response(random.choice(messages))
+                
+                if ai_reply and isinstance(ai_reply, str):
+                    return make_spooky_response(ai_reply)
+                else:
+                    logging.error(f"Invalid AI reply format: {ai_reply}")
+                    return make_spooky_response(random.choice(messages))
+            except json.JSONDecodeError as e:
+                logging.error(f"Failed to parse JSON response: {e}")
+                return make_spooky_response(random.choice(messages))
         else:
             logging.error(f"Hugging Face API error: {response.status_code} {response.text}")
+            if response.status_code == 403:
+                logging.error("Authentication error - check your API token")
+            elif response.status_code == 503:
+                logging.error("Model is loading - this can take a few minutes on first request")
     except requests.exceptions.Timeout:
         logging.error("API request timed out")
     except requests.exceptions.RequestException as e:
@@ -92,7 +125,7 @@ def get_ai_reply(user_message):
         logging.exception(f"Exception in get_ai_reply: {e}")
     
     # Fallback to spooky message
-    return random.choice(messages)
+    return make_spooky_response(random.choice(messages))
 
 @app.route("/")
 def index():
