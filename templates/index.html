@@ -173,11 +173,12 @@
       }, 15000 + Math.random()*15000);
     }
 
-    // Show newsletter popup on load and start effects
+    // Start effects on load
     window.onload = function() {
-      document.getElementById('newsletter-popup').style.display = 'block';
       bgMusic.volume = 0.3;
-      bgMusic.play();
+      bgMusic.play().catch(function(error) {
+        console.log("Audio play failed:", error);
+      });
       animateGhost();
       animateFog();
       randomGhostPopup();
