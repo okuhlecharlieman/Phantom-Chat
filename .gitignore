@@ -1,0 +1,19 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask
+instance/
+.webassets-cache
+
+# Logs
+*.log
+
+# Virtual Environment
+venv/
+env/
+ENV/
