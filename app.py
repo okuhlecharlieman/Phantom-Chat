@@ -62,11 +62,8 @@ def get_ai_reply(user_message):
         "Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"
     }
     payload = {
-        "inputs": {
-            "past_user_inputs": [],
-            "generated_responses": [],
-            "text": user_message
-        },
+        "inputs": user_message,
+        "wait_for_model": true
     }
     
     try:
