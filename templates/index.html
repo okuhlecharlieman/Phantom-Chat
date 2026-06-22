@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <div class="container">
  
   <header>
@@ -21,31 +22,33 @@
     </div>
   </header>
 
-  <div id="chat-window">
+  <main id="main-content" role="main">
+  <div id="chat-window" aria-live="polite" aria-label="Chat messages">
     <div id="messages"></div>
-    <div id="chat-actions">
-      <button class="emoji-btn" onclick="addEmoji('😂')">😂</button>
-      <button class="emoji-btn" onclick="addEmoji('😱')">😱</button>
-      <button class="emoji-btn" onclick="addEmoji('👻')">👻</button>
-      <button class="emoji-btn" onclick="addEmoji('🎃')">🎃</button>
-      <button class="like-btn" onclick="likeMessage()">👍 Like</button>
-      <button class="comment-btn" onclick="commentMessage()">💬 Comment</button>
+    <div id="chat-actions" aria-label="Chat actions">
+      <button class="emoji-btn" onclick="addEmoji('😂')" aria-label="Add laughing emoji">😂</button>
+      <button class="emoji-btn" onclick="addEmoji('😱')" aria-label="Add scared emoji">😱</button>
+      <button class="emoji-btn" onclick="addEmoji('👻')" aria-label="Add ghost emoji">👻</button>
+      <button class="emoji-btn" onclick="addEmoji('🎃')" aria-label="Add pumpkin emoji">🎃</button>
+      <button class="like-btn" onclick="likeMessage()" aria-label="Like last message">👍 Like</button>
+      <button class="comment-btn" onclick="commentMessage()" aria-label="Comment on last message">💬 Comment</button>
     </div>
   </div>
-  <input type="text" id="user-input" placeholder="Whisper to the spirits...">
-  <button id="send-btn">Summon Reply 🔮</button>
-  <audio id="ghost-sound" src="{{ url_for('static', filename='ghost.mp3') }}"></audio>
-  <audio id="bg-music" src="{{ url_for('static', filename='spooky-bg.mp3') }}" loop></audio>
+  <input type="text" id="user-input" placeholder="Whisper to the spirits..." aria-label="Type your message to the phantom" autocomplete="off">
+  <button id="send-btn" aria-label="Send your message to the phantom">Summon Reply 🔮</button>
+  </main>
+  <audio id="ghost-sound" src="{{ url_for('static', filename='ghost.mp3') }}" aria-hidden="true"></audio>
+  <audio id="bg-music" src="{{ url_for('static', filename='spooky-bg.mp3') }}" loop aria-hidden="true"></audio>
 
   <!-- Animated fog background -->
   <div id="fog-bg"></div>
   <!-- Floating ghost animation -->
-  <div id="floating-ghost">👻</div>
+  <div id="floating-ghost" aria-hidden="true">👻</div>
   <!-- Random ghost popup (jump scare) -->
-  <div id="ghost-popup" class="popup" style="display:none;">
-    <span class="close" onclick="document.getElementById('ghost-popup').style.display='none'">×</span>
-    <h2 class="flicker">BOO! 👻</h2>
-    <p>The ghost is watching you...</p>
+  <div id="ghost-popup" class="popup" style="display:none;" role="dialog" aria-labelledby="popup-title" aria-describedby="popup-desc">
+    <span class="close" onclick="document.getElementById('ghost-popup').style.display='none'" aria-label="Close popup">×</span>
+    <h2 id="popup-title" class="flicker">BOO! 👻</h2>
+    <p id="popup-desc">The ghost is watching you...</p>
   </div>
 
   <script>
@@ -62,6 +65,14 @@
       const msg = document.createElement("div");
       msg.className = sender === "user" ? "user-msg" : "ghost-msg flicker";
       msg.innerText = text;
+      // Add ARIA attributes for accessibility
+      if(sender === "user") {
+        msg.setAttribute("role", "status");
+        msg.setAttribute("aria-live", "polite");
+      } else {
+        msg.setAttribute("role", "alert");
+        msg.setAttribute("aria-live", "assertive");
+      }
       messages.appendChild(msg);
       messages.scrollTop = messages.scrollHeight;
       if(sender === "ghost") ghostSound.play();
@@ -72,6 +83,9 @@
       const typing = document.createElement('div');
       typing.className = 'ghost-typing';
       typing.innerHTML = '<span></span><span></span><span></span>';
+      typing.setAttribute('aria-label', 'Phantom is typing...');
+      typing.setAttribute('role', 'status');
+      typing.setAttribute('aria-live', 'polite');
       messages.appendChild(typing);
       messages.scrollTop = messages.scrollHeight;
       return typing;
@@ -134,6 +148,7 @@
       e.className = 'floating-emoji';
       e.innerText = emoji;
       e.style.left = (Math.random() * 80 + 10) + 'vw';
+      e.setAttribute('aria-hidden', 'true');
       document.body.appendChild(e);
       setTimeout(() => { e.remove(); }, 2000);
     }
