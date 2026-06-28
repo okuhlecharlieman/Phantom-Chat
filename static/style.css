@@ -1,9 +1,41 @@
 /* Ensure body uses full viewport height and centers content vertically and horizontally */
 @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&display=swap');
 
+:root {
+  --primary-color: #8b0000;
+  --accent-color: #ff0000;
+  --bg-color: #000;
+  --text-color: #fff;
+  --chat-bg: rgba(0,0,0,0.95);
+  --user-msg-bg: rgba(20, 20, 20, 0.8);
+  --ghost-msg-bg: rgba(139, 0, 0, 0.2);
+  --border-color: #8b0000;
+  --input-bg: rgba(0, 0, 0, 0.8);
+  --action-bg: rgba(0, 0, 0, 0.5);
+  --fog-opacity: 0.05;
+  --transition-speed: 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  @keyframes creepyFlicker { from { opacity: 1; transform: scale(1); } to { opacity: 1; transform: scale(1); } }
+  @keyframes pulseText { from { opacity: 1; } to { opacity: 1; } }
+  @keyframes floatCandle { from { transform: translateY(0) rotate(-5deg); } to { transform: translateY(0) rotate(-5deg); } }
+  @keyframes ghostFlicker { from { opacity: 1; text-shadow: 0 0 5px #ff0000; } to { opacity: 1; text-shadow: 0 0 5px #ff0000; } }
+  @keyframes buttonGlow { from { transform: rotate(45deg) translateX(-100%); } to { transform: rotate(45deg) translateX(-100%); } }
+  @keyframes likeEffect { from { transform: scale(1); } to { transform: scale(1); } }
+  @keyframes commentSlide { from { opacity: 1; transform: translateX(0); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes fogFloat { from { transform: translateX(-100%) translateY(0); opacity: 0; } to { transform: translateX(-100%) translateY(0); opacity: 0; } }
+  @keyframes ghostFloat { from { transform: translateY(0); } to { transform: translateY(0); } }
+  @keyframes typing { from { opacity: 0.3; } to { opacity: 0.3; } }
+}
+
 body {
-  background: #000;
-  color: #fff;
+  background: var(--bg-color);
+  color: var(--text-color);
   font-family: 'Courier New', monospace;
   display: flex;
   justify-content: flex-start;
@@ -14,6 +46,9 @@ body {
   flex-direction: column;
   position: relative;
   overflow-y: auto;
+  /* Accessibility: ensure sufficient contrast */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Creepy background effect */
@@ -75,11 +110,11 @@ h1.flicker {
   font-family: 'Nosifer', cursive;
   font-size: clamp(1.5em, 5vw, 3em);
   text-align: center;
-  color: #8b0000;
+  color: var(--primary-color);
   text-shadow: 
-    0 0 10px #ff0000,
-    0 0 20px #ff0000,
-    0 0 30px #000;
+    0 0 10px var(--accent-color),
+    0 0 20px var(--accent-color),
+    0 0 30px var(--bg-color);
   animation: creepyFlicker 3s infinite;
   margin: 20px 0;
   white-space: nowrap;
@@ -95,8 +130,8 @@ h1.flicker {
 .subtitle {
   font-size: 1.4em;
   text-align: center;
-  color: #ff0000;
-  text-shadow: 0 0 10px #8b0000;
+  color: var(--accent-color);
+  text-shadow: 0 0 10px var(--primary-color);
   animation: pulseText 2s infinite;
   margin-bottom: 20px;
 }
@@ -142,11 +177,11 @@ h1.flicker {
   height: 30vh;
   max-height: 300px;
   min-height: 200px;
-  border: 2px solid #8b0000;
+  border: 2px solid var(--border-color);
   padding: 10px;
   overflow-y: auto;
   margin: 10px 0;
-  background: rgba(0,0,0,0.95);
+  background: var(--chat-bg);
   border-radius: 12px;
   box-shadow: 
     0 0 20px rgba(139, 0, 0, 0.5),
@@ -163,11 +198,11 @@ h1.flicker {
 }
 
 #chat-window::-webkit-scrollbar-track {
-  background: #000;
+  background: var(--bg-color);
 }
 
 #chat-window::-webkit-scrollbar-thumb {
-  background: #8b0000;
+  background: var(--primary-color);
   border-radius: 4px;
 }
 
@@ -190,25 +225,25 @@ h1.flicker {
 }
 
 .user-msg {
-  background: rgba(20, 20, 20, 0.8);
-  color: #fff;
+  background: var(--user-msg-bg);
+  color: var(--text-color);
   margin-left: auto;
-  border-left: 3px solid #8b0000;
+  border-left: 3px solid var(--primary-color);
 }
 
 .ghost-msg {
-  background: rgba(139, 0, 0, 0.2);
-  color: #ff0000;
+  background: var(--ghost-msg-bg);
+  color: var(--accent-color);
   margin-right: auto;
-  border-right: 3px solid #8b0000;
+  border-right: 3px solid var(--primary-color);
   font-family: 'Creepster', cursive;
-  text-shadow: 0 0 5px #ff0000;
+  text-shadow: 0 0 5px var(--accent-color);
   animation: ghostFlicker 2s infinite;
 }
 
 @keyframes ghostFlicker {
-  0%, 100% { opacity: 1; text-shadow: 0 0 5px #ff0000; }
-  50% { opacity: 0.7; text-shadow: 0 0 15px #ff0000; }
+  0%, 100% { opacity: 1; text-shadow: 0 0 5px var(--accent-color); }
+  50% { opacity: 0.7; text-shadow: 0 0 15px var(--accent-color); }
 }
 
 /* Input and button full width on mobile */
@@ -217,41 +252,51 @@ input#user-input {
   max-width: 100%;
   padding: 10px;
   margin-bottom: 8px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border: 1px solid #8b0000;
+  background: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 1em;
   box-sizing: border-box;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
+  /* Accessibility: focus outline for keyboard navigation */
+  outline: 2px solid transparent;
 }
 
 input#user-input:focus {
-  outline: none;
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
   box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
-  border-color: #ff0000;
+  border-color: var(--accent-color);
 }
 
 button#send-btn {
   width: 100%;
   max-width: 100%;
   padding: 10px 0;
-  background: #8b0000;
+  background: var(--primary-color);
   border: none;
   border-radius: 6px;
-  color: #fff;
+  color: var(--text-color);
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
   font-size: 1em;
   text-transform: uppercase;
   letter-spacing: 2px;
   position: relative;
   overflow: hidden;
+  /* Accessibility: focus state */
+  outline: 2px solid transparent;
+}
+
+button#send-btn:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 button#send-btn:hover {
-  background: #ff0000;
+  background: var(--accent-color);
   transform: scale(1.02);
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
 }
@@ -283,7 +328,7 @@ button#send-btn::after {
   gap: 12px;
   padding: 15px;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--action-bg);
   border-radius: 12px;
   margin: 10px 0;
   width: 100%;
@@ -296,11 +341,18 @@ button#send-btn::after {
   height: 40px;
   font-size: 1.2em;
   border-radius: 50%;
-  border: 1px solid #8b0000;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
+  /* Accessibility: focus state */
+  outline: 2px solid transparent;
+}
+
+.emoji-btn:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 .emoji-btn:hover {
@@ -312,15 +364,22 @@ button#send-btn::after {
   padding: 8px 16px;
   font-size: 1em;
   background: rgba(139, 0, 0, 0.2);
-  border: 1px solid #8b0000;
+  border: 1px solid var(--border-color);
   border-radius: 20px;
-  color: #ff0000;
+  color: var(--accent-color);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
   display: flex;
   align-items: center;
   gap: 6px;
   text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  /* Accessibility: focus state */
+  outline: 2px solid transparent;
+}
+
+.like-btn:focus, .comment-btn:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 .like-btn:hover, .comment-btn:hover {
@@ -349,7 +408,7 @@ button#send-btn::after {
   padding: 6px 12px;
   margin-top: 6px;
   border-radius: 12px;
-  border-left: 2px solid #8b0000;
+  border-left: 2px solid var(--border-color);
   animation: commentSlide 0.3s ease-out;
 }
 
@@ -385,7 +444,7 @@ button#send-btn::after {
   position: absolute;
   width: 100px;
   height: 100px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, var(--fog-opacity));
   border-radius: 50%;
   filter: blur(20px);
   animation: fogFloat linear infinite;
@@ -441,7 +500,7 @@ button#send-btn::after {
 .ghost-typing span {
   width: 8px;
   height: 8px;
-  background: #8b0000;
+  background: var(--primary-color);
   border-radius: 50%;
   animation: typing 1s infinite;
 }
@@ -452,7 +511,7 @@ button#send-btn::after {
 /* Popup styling */
 .popup {
   background: rgba(0, 0, 0, 0.95);
-  border: 2px solid #8b0000;
+  border: 2px solid var(--border-color);
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
   padding: 20px;
@@ -466,7 +525,7 @@ button#send-btn::after {
 }
 
 .popup h2 {
-  color: #8b0000;
+  color: var(--primary-color);
   font-family: 'Nosifer', cursive;
   margin-bottom: 15px;
 }
@@ -475,14 +534,14 @@ button#send-btn::after {
   position: absolute;
   right: 10px;
   top: 10px;
-  color: #8b0000;
+  color: var(--primary-color);
   cursor: pointer;
   font-size: 24px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
 }
 
 .popup .close:hover {
-  color: #ff0000;
+  color: var(--accent-color);
   transform: scale(1.1);
 }
 
@@ -557,3 +616,46 @@ button#send-btn::after {
   }
 }
 
+/* Accessibility enhancements */
+/* Focus management for keyboard users */
+:focus {
+  outline-offset: 2px;
+}
+
+/* Skip link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent-color);
+  color: var(--bg-color);
+  padding: 8px;
+  text-decoration: none;
+  z-index: 1001;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Semantic HTML improvements */
+[role="main"] {
+  margin: 0 auto;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
